@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Instituição</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url("../static/img/subtle-white-feathers.png");
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: #a3d4ff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.548);
+      width: 350px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #003366;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #073669;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <form id="formCadastro">
+      <h2>Cadastro de Instituição</h2>
+
+      <label for="nome">Nome da Instituição:</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="endereco">Endereço:</label>
+      <input type="text" id="endereco" name="endereco" required>
+
+      <label for="cidade">Cidade:</label>
+      <input type="text" id="cidade" name="cidade" required>
+
+      <button type="submit">Cadastrar</button>
+
+      <div id="mensagem" style="margin-top: 10px; color: rgb(0, 0, 0);"></div>
+    </form>
+  </div>
+
+
+  <script>
+    document.getElementById("formCadastro").addEventListener("submit", async function (event) {
+      event.preventDefault(); 
+  
+      const nome = document.getElementById("nome").value;
+      const endereco = document.getElementById("endereco").value;
+      const cidade = document.getElementById("cidade").value;
+  
+      const mensagemDiv = document.getElementById("mensagem");
+      mensagemDiv.style.color = "black";
+  
+      try {
+        const resposta = await fetch("/cadastrar", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: new URLSearchParams({
+            nome: nome,
+            endereco: endereco,
+            cidade: cidade
+          })
+        });
+  
+        const dados = await resposta.json();
+  
+        if (resposta.ok) {
+          mensagemDiv.textContent = dados.mensagem;
+          document.getElementById("formCadastro").reset();
+        } else {
+          mensagemDiv.style.color = "red";
+          mensagemDiv.textContent = dados.erro || "Erro ao cadastrar.";
+        }
+  
+      } catch (erro) {
+        mensagemDiv.style.color = "red";
+        mensagemDiv.textContent = "Erro na requisição.";
+        console.error(erro);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doações</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="cadastre">
+      <div class="texto">
+        <h3> Deseja cadastrar uma instituição ?   </h3>
+      </div>
+      <div class="botão">
+        <button>
+          <a href="{{ url_for('formulario') }}" >Cadastre</a>
+        </button>
+      </div>
+  </div>
+
+
+  <div id="cards-container">
+    <div id="instituicoes"></div>
+    <div class="grafico">
+      <h2>TOTAIS DE ALIMENTOS DOADOS POR INSTITUIÇÃO</h2>
+      <canvas id="graficoPizza" width="400" height="400"></canvas>
+    </div>
+  </div>
+
+  <div id="modalAviso" style="display: none; position: fixed; top: 10px; right: 10px; width: 300px; height: auto; background-color: transparent; z-index: 9999;">
+    <div style="background-color: rgb(182, 178, 178); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+    <h2>Atenção!</h2>
+    <p>Todos os endereços usados neste site são fictícios e servem apenas para demonstração.</p>
+    <button onclick="document.getElementById('modalAviso').style.display='none'">Fechar</button>
+  </div>
+  </div>
+
+  <footer>
+    <p>  2025 © Todos os direitos reservados. Projeto Integrador III - Grupo 010 - DRP13®</p>
+  </footer>
+
+
+
+<script>
+  async function carregarDados() {
+  try {
+    // Fazendo a requisição para a API
+    const resposta = await fetch('/dados'); 
+    const dados = await resposta.json(); 
+
+    // Desestruturando os dados
+    const { dados1, dados2, dados3 } = dados;
+    
+
+    list_dados = [dados1 , dados2 , dados3]
+  
+    atualizarCards(list_dados);
+  } catch (erro) {
+    console.error('Erro ao carregar dados:', erro);
+  }
+}
+
+
+function atualizarCards(list_dados) {
+  console.log(list_dados)
+  const container = document.getElementById('instituicoes');
+
+  container.innerHTML = ''; // Limpa os cards anteriores
+
+  // Loop para gerar os cards com os dados
+  list_dados.forEach(list_dados => {
+  const card = document.createElement('div');
+  card.classList.add('card');
+
+  card.innerHTML = `
+    <h3>${list_dados[0]}</h3>
+    <p>${list_dados[1]}</p>
+    <p>${list_dados[2]}</p>
+    <button><a href="/doar?nome=${encodeURIComponent(list_dados[0])}&endereco=${encodeURIComponent(list_dados[1])}&cidade=${encodeURIComponent(list_dados[2])}">Doar</a></button>
+  `;
+
+  container.appendChild(card);
+});
+}
+
+// Atualiza a cada 30 segundos
+setInterval(carregarDados, 30000);
+
+
+carregarDados();
+</script>
+      
+
+
+<!-- Script para mostrar o modal -->
+<script>
+  window.onload = function() {
+    document.getElementById('modalAviso').style.display = 'block';
+  };
+</script>
+
+
+<script>
+  async function gerar_dados_pizza() {
+    try {
+      const resposta = await fetch('/grafico');
+      const respostaJson = await resposta.json();
+
+     
+      const dados = respostaJson.dados;
+
+      // Extrai os nomes e valores da resposta
+      const labels = dados.map(item => item.nome);
+      const valores = dados.map(item => item.total_doado);
+
+      const ctx = document.getElementById('graficoPizza').getContext('2d');
+
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Doações',
+            data: valores,
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#8e44ad', '#2ecc71'],
+            borderColor: '#fff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'Distribuição das Doações'
+            }
+          }
+        }
+      });
+
+    } catch (erro) {
+      console.error('Erro ao carregar gráfico:', erro);
+    }
+  }
+
+  gerar_dados_pizza(); 
+</script>
+  
+</body>
+</html>

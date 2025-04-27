@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Doação de Alimentos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      background-image: url("../static/img/subtle-white-feathers.png");
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .form-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    .mensagem {
+      font-size: 14px;
+      color: #000000;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4799f1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .agradecimento {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <form id="form-doacao" action="/cadastrar_doação" method="POST">
+      <input type="hidden" name="nome" value="{{nome}}">
+      <label for="quantidade">Quantidade de alimentos:</label>
+      <input type="number" id="quantidade" name="quantidade" min="1" required>
+
+      <p class="mensagem">Envie para o endereço da instituição escolhida.</p>
+
+      <button type="submit">Cadastrar Doação</button>
+
+      <p class="agradecimento" id="agradecimento" style="margin-top: 10px; color: rgb(0, 0, 0);">Obrigado pela doação!</p>
+    </form>
+    <button onclick="mostrarRota()"  style="margin-top: 10px;">📍 Ver rota até a instituição</button>
+    <div id="mapa" style="width: 100%; height: 300px; margin:auto; display: block;"></div>
+  </div>
+
+
+ <script>
+  document.getElementById("form-doacao").addEventListener("submit", async function (event) {
+    event.preventDefault(); // Impede o recarregamento da página
+
+
+    const quantidade = document.getElementById("quantidade").value;
+
+
+    const mensagemDiv = document.getElementById("agradecimento");
+    mensagemDiv.style.color = "Green";
+
+    try {
+      const resposta = await fetch("/cadastrar_doação", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+          nome: nome,
+          quantidade: quantidade,
+        })
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        mensagemDiv.textContent = dados.mensagem;
+        mensagemDiv.style.display = "block";  
+        // Limpa os campos
+        document.getElementById("form-doacao").reset();
+      } else {
+        mensagemDiv.style.color = "red";
+        mensagemDiv.style.display = "block";  
+        mensagemDiv.textContent = dados.erro || "Erro ao cadastrar.";
+      }
+
+    } catch (erro) {
+      mensagemDiv.style.color = "red";
+      mensagemDiv.style.display = "block"; 
+      mensagemDiv.textContent = "Erro na requisição.";
+      console.error(erro);
+    }
+  });
+</script>
+
+
+
+<script>
+  const endereco = "{{ endereco }}";
+    const nome = "{{nome}}";
+</script>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script>
+  let map;
+  function mostrarRota(){
+    const enderecos = {
+      "Origem": [ -23.55052, -46.63331 ], // São Paulo (exemplo fictício)
+    };
+
+    const endereco = [-15.793889, -47.882778]
+    
+
+    // Pegue os "endereços" como strings
+    const enderecoOrigem = "Origem";
+    const enderecoDestino = endereco;
+
+    // Busca coordenadas dos endereços
+    const origem = enderecos[enderecoOrigem];
+    const destino = endereco;
+
+    // Inicializa o mapa no ponto de origem
+    if (!map) {
+      map = L.map('mapa').setView(origem, 14);
+
+    //  tiles do OpenStreetMap 
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    //  marcadores com nomes dos endereços
+    L.marker(origem).addTo(map).bindPopup(enderecoOrigem).openPopup();
+    L.marker(destino).addTo(map).bindPopup(nome).openPopup();
+
+    //  rota entre origem e destino
+    L.Routing.control({
+      waypoints: [
+        L.latLng(origem),
+        L.latLng(destino)
+      ],
+      routeWhileDragging: false,
+      show: false,
+      createMarker: function() { return null; } 
+    }).addTo(map);
+  }}
+</script>
+ 
+</body>
+</html>

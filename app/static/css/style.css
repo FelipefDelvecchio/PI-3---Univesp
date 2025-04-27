@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff  ;
+    background-image: url("../img/subtle-white-feathers.png");
+    margin: 0;
+    padding: 0;
+  }
+
+  .cadastre {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.705);
+    padding-top: 10px;
+    width: 800px;
+    height: 65px;
+    background-color: #a3d4ff;
+    margin: 20px auto; 
+    display: flex;
+    border-radius: 10px;
+    justify-content: space-between; 
+    align-items: center;
+  }
+
+  .texto{
+    margin: auto;
+  }
+
+
+  .texto h3{
+    color: #003c6c;
+  }
+
+  .botão{
+    display: flex;
+    justify-content: right;
+    padding: 15px;
+  }
+
+  .botão button{
+    background-color: #003c6c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .botão a{
+    text-decoration: none;
+    color: #fff;
+  }
+
+  #cards-container {
+    background-color: #a3d4f2;
+    margin: 0 40px 40px 40px;
+    padding: 70px;
+    border-radius: 30px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+    align-items: flex-start; 
+  }
+  
+  #instituicoes {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 300px;
+  }
+  
+  .card {
+    background-color: #fff;
+    width: 85%; 
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .card:hover {
+    transform: scale(1.1); 
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); 
+}
+  .card h3 {
+    margin: 0 0 5px;
+    color: #00284d;
+  }
+  .card p {
+    margin: 0 0 10px;
+  }
+  .card button {
+    background-color: #003c6c;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .card a {
+    text-decoration: none;
+    color: #fff;
+  }
+  .grafico {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .grafico h2 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #00284d;
+  }
+  .grafico img {
+    width: 100%;
+    max-width: 300px;
+  }
+  .titulo {
+    background-color: #e7f2fb;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: #00284d;
+  }
+
+
+  @media (max-width: 768px) {
+    .cadastre {
+        width: 90%;
+        flex-direction: column;
+        align-items: center;
+    }
+    .texto, .botão {
+        text-align: center;
+    }
+}
