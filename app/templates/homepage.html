@@ -36,6 +36,22 @@
   </div>
   </div>
 
+
+
+
+
+
+
+<div id="modalAviso_alerta" style="display: none; position: fixed; top: 35%; left: 35%; width: 300px; height: auto; background-color: transparent; z-index: 9999;">
+  <div style="background-color: rgb(182, 178, 178); padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); color: red;">
+    <h2>Atenção!</h2>
+    <p id="nomeAleatorio">Alerta recebido.</p>
+    <button onclick="document.getElementById('modalAviso_alerta').style.display='none'">Fechar</button>
+  </div>
+</div>
+
+
+
   <footer>
     <p>  2025 © Todos os direitos reservados. Projeto Integrador III - Grupo 010 - DRP13®</p>
   </footer>
@@ -100,6 +116,26 @@ carregarDados();
   };
 </script>
 
+
+
+<script>
+  function mostrarModal() {
+    const nomes = ["Assistencia_Social", "Escolas", "Lar_Idosos", "Hospital", "Orfanatos", "creche"];
+
+    // Escolhe um nome aleatório
+    const nome = nomes[Math.floor(Math.random() * nomes.length)];
+
+    // Coloca o nome dentro do modal
+    document.getElementById("nomeAleatorio").innerText =
+      "Alerta recebido do Banco de Alimentos : " + nome;
+
+    // Mostra o modal
+    document.getElementById("modalAviso_alerta").style.display = "block";
+  }
+
+  // Você pode chamar mostrarModal() quando quiser:
+mostrarModal()
+</script>
 
 <script>
   async function gerar_dados_pizza() {
